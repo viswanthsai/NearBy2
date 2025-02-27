@@ -7,6 +7,7 @@
     <title>Nearby Essential Places</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -24,127 +25,137 @@
         }
     </script>
 </head>
-<body class="bg-gray-50 text-gray-700 font-sans">
-    <div class="container max-w-6xl mx-auto px-4 py-6">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-semibold text-primary flex items-center justify-center gap-2">
+<body class="bg-gray-100 text-gray-700 font-sans min-h-screen flex flex-col">
+    <div class="w-full bg-white shadow-sm">
+        <header class="max-w-[1600px] mx-auto px-4 py-4">
+            <h1 class="text-2xl font-semibold text-primary flex items-center gap-2">
                 <i class="fas fa-map-marker-alt"></i> Nearby Essentials
+                <span class="text-sm font-normal text-gray-500 ml-2">Find important places around you</span>
             </h1>
-            <p class="text-gray-500">Find important places around you</p>
         </header>
+    </div>
 
-        <!-- Emergency Button Section -->
-        <div class="emergency-section mb-6 flex justify-center">
-            <div class="emergency-container bg-red-50 border border-red-200 rounded-xl p-4 flex flex-col md:flex-row items-center gap-4 w-full max-w-3xl shadow-sm">
-                <div class="text-center md:text-left md:flex-1">
-                    <h3 class="font-bold text-red-700 mb-1">Emergency Services</h3>
-                    <p class="text-sm text-red-600">Quickly find nearest emergency locations</p>
-                </div>
-                <div class="flex flex-wrap gap-3 justify-center">
-                    <button id="emergency-hospital" class="emergency-btn" data-type="hospital">
-                        <i class="fas fa-hospital"></i> Hospital
-                    </button>
-                    <button id="emergency-police" class="emergency-btn" data-type="police">
-                        <i class="fas fa-shield-alt"></i> Police
-                    </button>
-                    <button id="emergency-fire" class="emergency-btn" data-type="fire_station">
-                        <i class="fas fa-fire-extinguisher"></i> Fire Station
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="space-y-4 mb-6">
-            <!-- Location Search -->
-            <div class="flex flex-col md:flex-row gap-4 w-full">
-                <div class="relative flex-grow">
-                    <input type="text" id="location-search" placeholder="Search for a location" 
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
-                    <button id="location-search-btn" title="Search location" 
-                            class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-primary">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-                <div class="flex gap-2 items-center">
-                    <label for="radius-input" class="whitespace-nowrap">Radius:</label>
-                    <input type="text" id="radius-input" value="5" min="1" max="50" 
-                           class="w-16 px-2 py-2 border border-gray-300 rounded-lg text-center">
-                    <span class="text-gray-500">km</span>
-                    <button id="search-btn" 
-                            class="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
-                        Search Area
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Filters -->
-            <div class="flex flex-wrap gap-4 items-center">
-                <div class="font-medium text-gray-600">Filter by:</div>
-                <div id="filter-options" class="flex flex-wrap gap-2">
-                    <!-- Populated by JavaScript -->
-                </div>
-                <div class="flex items-center gap-2 ml-auto">
-                    <input type="checkbox" id="fake-filter" checked
-                           class="w-4 h-4 accent-primary">
-                    <label for="fake-filter" class="text-sm text-gray-600">Filter suspicious places</label>
-                </div>
-            </div>
-        </div>
-
-        <div class="flex flex-col lg:flex-row gap-4">
-            <!-- Map Container -->
-            <div class="relative w-full lg:w-2/3 h-[400px] lg:h-[600px]" id="map-container">
-                <div id="map" class="w-full h-full rounded-xl shadow-md"></div>
-                <div class="absolute bottom-4 right-4 flex gap-2">
-                    <button id="recenter-btn" title="Recenter map" 
-                            class="bg-white hover:bg-gray-100 p-2 rounded-full shadow-md text-gray-700 transition-colors">
-                        <i class="fas fa-crosshairs"></i>
-                    </button>
-                    <button id="custom-location-btn" title="Set custom location" 
-                            class="bg-white hover:bg-gray-100 p-2 rounded-full shadow-md text-gray-700 transition-colors">
-                        <i class="fas fa-map-pin"></i>
-                    </button>
-                    <button id="reset-btn" title="Reset app" 
-                            class="bg-white hover:bg-gray-100 p-2 rounded-full shadow-md text-gray-700 transition-colors">
-                        <i class="fas fa-redo"></i>
-                    </button>
-                    <button id="toggle-results-btn" class="lg:hidden bg-white hover:bg-gray-100 p-2 rounded-full shadow-md text-gray-700 transition-colors" title="Toggle results">
-                        <i class="fas fa-list"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Results Container -->
-            <div id="results-container" class="w-full lg:w-1/3 bg-white rounded-xl shadow-md flex flex-col h-[400px] lg:h-[600px]">
-                <div class="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50 rounded-t-xl">
-                    <h2 class="text-lg font-medium">Nearby Places</h2>
-                    <div class="flex items-center gap-2 text-sm">
-                        <label for="sort-select">Sort by:</label>
-                        <select id="sort-select" class="border border-gray-300 rounded px-2 py-1 text-sm bg-white">
-                            <option value="distance">Distance</option>
-                            <option value="name">Name</option>
-                            <option value="rating">Rating</option>
-                        </select>
+    <div class="w-full bg-gray-50 py-2">
+        <div class="max-w-[1600px] mx-auto px-4">
+            <!-- Emergency Button Section - Redesigned -->
+            <div class="emergency-section my-2">
+                <div class="emergency-container bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-500 rounded-lg p-3 flex flex-wrap md:flex-row items-center gap-3 shadow-sm">
+                    <div class="text-center md:text-left md:flex-1">
+                        <h3 class="font-bold text-red-700">Emergency Services</h3>
+                        <p class="text-xs text-red-600">Quickly find nearest emergency locations</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 justify-end">
+                        <button id="emergency-hospital" class="emergency-btn" data-type="hospital">
+                            <i class="fas fa-hospital"></i> Hospital
+                        </button>
+                        <button id="emergency-police" class="emergency-btn" data-type="police">
+                            <i class="fas fa-shield-alt"></i> Police
+                        </button>
+                        <button id="emergency-fire" class="emergency-btn" data-type="fire_station">
+                            <i class="fas fa-fire-extinguisher"></i> Fire Station
+                        </button>
                     </div>
                 </div>
-                <div id="results-list" class="flex-1 overflow-y-auto p-4">
-                    <div class="flex flex-col items-center justify-center text-gray-500 h-full">
-                        <i class="fas fa-spinner fa-spin text-3xl mb-4 text-primary"></i>
-                        <span>Locating you...</span>
+            </div>
+
+            <div class="space-y-2 mb-2">
+                <!-- Location Search -->
+                <div class="flex flex-col md:flex-row gap-2 w-full">
+                    <div class="relative flex-grow">
+                        <input type="text" id="location-search" placeholder="Search for a location" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
+                        <button id="location-search-btn" title="Search location" 
+                                class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="flex gap-2 items-center shrink-0">
+                        <label for="radius-input" class="whitespace-nowrap text-sm">Radius:</label>
+                        <input type="text" id="radius-input" value="5" min="1" max="50" 
+                               class="w-12 px-2 py-1.5 border border-gray-300 rounded-lg text-center text-sm">
+                        <span class="text-gray-500 text-sm">km</span>
+                        <button id="search-btn" 
+                                class="bg-primary hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg transition-colors text-sm">
+                            Search
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Filters -->
+                <div class="flex flex-wrap gap-3 items-center py-1">
+                    <div class="text-sm font-medium text-gray-600">Filter:</div>
+                    <div id="filter-options" class="flex flex-wrap gap-1.5">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <div class="flex items-center gap-1.5 ml-auto">
+                        <input type="checkbox" id="fake-filter" checked
+                               class="w-3.5 h-3.5 accent-primary">
+                        <label for="fake-filter" class="text-xs text-gray-600">Filter suspicious places</label>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="text-center py-4 text-gray-500 text-sm mt-8">
-        <p>© 2025 Nearby Essentials | <button id="about-btn" class="text-primary hover:underline">About</button></p>
+    <main class="flex-grow w-full bg-white">
+        <div class="max-w-[1600px] mx-auto px-4 py-2">
+            <div class="flex flex-col lg:flex-row gap-3">
+                <!-- Map Container - now 50% width -->
+                <div class="relative w-full lg:w-1/2 h-[280px] lg:h-[450px]" id="map-container">
+                    <div id="map" class="w-full h-full rounded-md border border-gray-200 shadow-sm"></div>
+                    <div class="absolute bottom-4 right-4 flex flex-col gap-2">
+                        <button id="recenter-btn" title="Recenter map" 
+                                class="bg-white p-2 rounded-full shadow-sm text-gray-700 border border-gray-200">
+                            <i class="fas fa-crosshairs"></i>
+                        </button>
+                        <button id="custom-location-btn" title="Set custom location" 
+                                class="bg-white p-2 rounded-full shadow-sm text-gray-700 border border-gray-200">
+                            <i class="fas fa-map-pin"></i>
+                        </button>
+                        <button id="reset-btn" title="Reset app" 
+                                class="bg-white p-2 rounded-full shadow-sm text-gray-700 border border-gray-200">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button id="toggle-results-btn" class="lg:hidden bg-white p-2 rounded-full shadow-sm text-gray-700 border border-gray-200" title="Toggle results">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Container - now 50% width -->
+                <div id="results-container" class="w-full lg:w-1/2 bg-white rounded-md border border-gray-200 flex flex-col h-[400px] lg:h-[450px] shadow-sm">
+                    <div class="flex justify-between items-center p-3 border-b border-gray-200 bg-white">
+                        <h2 class="text-base font-medium">Nearby Places</h2>
+                        <div class="flex items-center gap-2 text-xs">
+                            <label for="sort-select">Sort by:</label>
+                            <select id="sort-select" class="border border-gray-300 rounded px-2 py-1 text-xs bg-white">
+                                <option value="distance">Distance</option>
+                                <option value="name">Name</option>
+                                <option value="rating">Rating</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="results-list" class="flex-1 overflow-y-auto p-3">
+                        <div class="flex flex-col items-center justify-center text-gray-500 h-full">
+                            <i class="fas fa-spinner fa-spin text-3xl mb-4 text-primary"></i>
+                            <span>Locating you...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="w-full bg-white shadow-inner py-2 text-gray-500 text-xs mt-auto">
+        <div class="max-w-[1600px] mx-auto px-4 text-center">
+            <p>© 2025 Nearby Essentials | <button id="about-btn" class="text-primary hover:underline">About</button></p>
+        </div>
     </footer>
 
     <!-- Modal -->
     <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-6 max-w-2xl w-11/12 max-h-[80vh] overflow-y-auto relative">
-            <span class="close-btn absolute top-4 right-4 text-2xl cursor-pointer text-gray-500">&times;</span>
+        <div class="bg-white rounded-xl p-5 max-w-2xl w-11/12 max-h-[80vh] overflow-y-auto relative">
+            <span class="close-btn absolute top-4 right-4 text-xl cursor-pointer text-gray-500">&times;</span>
             <div id="modal-body"></div>
         </div>
     </div>
@@ -153,8 +164,23 @@
     <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg hidden"></div>
 
     <script src="mapFix.js"></script>
+    <script src="mapTroubleshoot.js"></script>
     <script src="script.js"></script>
     <script src="debug.js"></script>
+    <!-- Add a direct inline check to ensure map is properly initialized -->
+    <script>
+        // Backup initialization check
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (typeof map === 'undefined' || !map) {
+                    console.warn("Map not initialized after page load, attempting recovery");
+                    if (typeof google !== 'undefined' && typeof initApp === 'function') {
+                        initApp();
+                    }
+                }
+            }, 1500);
+        });
+    </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJj-eKWrCphSMh367tjbAEbYvHzcmooQw&libraries=places,geometry&callback=initApp" async defer></script>
 </body>
 </html>

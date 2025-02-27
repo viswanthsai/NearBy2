@@ -576,28 +576,39 @@ function initializeMap() {
     document.querySelector('#results-list').innerHTML = 
         '<div class="flex flex-col items-center justify-center text-gray-500 h-full"><i class="fas fa-spinner fa-spin text-3xl mb-4 text-primary"></i><span>Getting your location...</span></div>';
     
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                // Success callback
-                userLocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-                createMap(userLocation);
-            },
-            function(error) {
-                // Error callback - use default location
-                document.querySelector('#results-list').innerHTML = 
-                    '<div class="flex flex-col items-center justify-center text-gray-500 h-full"><i class="fas fa-exclamation-triangle text-3xl mb-4 text-yellow-500"></i><span>Could not access your location. Using default.</span></div>';
-                userLocation = { lat: 40.7128, lng: -74.0060 }; // Default: New York
-                createMap(userLocation);
-            }
-        );
-    } else {
-        // Geolocation not supported
-        document.querySelector('#results-list').innerHTML = 
-            '<div class="flex flex-col items-center justify-center text-gray-500 h-full"><i class="fas fa-exclamation-triangle text-3xl mb-4 text-yellow-500"></i><span>Geolocation not supported. Using default location.</span></div>';
+    try {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // Success callback
+                    console.log("Geolocation successful");
+                    userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    createMap(userLocation);
+                },
+                function(error) {
+                    // Error callback - use default location
+                    console.warn("Geolocation error:", error.code, error.message);
+                    document.querySelector('#results-list').innerHTML = 
+                        '<div class="flex flex-col items-center justify-center text-gray-500 h-full"><i class="fas fa-exclamation-triangle text-3xl mb-4 text-yellow-500"></i><span>Could not access your location. Using default.</span></div>';
+                    userLocation = { lat: 40.7128, lng: -74.0060 }; // Default: New York
+                    createMap(userLocation);
+                },
+                { timeout: 10000, enableHighAccuracy: false } // Add options for faster response
+            );
+        } else {
+            // Geolocation not supported
+            console.warn("Geolocation not supported");
+            document.querySelector('#results-list').innerHTML = 
+                '<div class="flex flex-col items-center justify-center text-gray-500 h-full"><i class="fas fa-exclamation-triangle text-3xl mb-4 text-yellow-500"></i><span>Geolocation not supported. Using default location.</span></div>';
+            userLocation = { lat: 40.7128, lng: -74.0060 }; // Default: New York
+            createMap(userLocation);
+        }
+    } catch (e) {
+        console.error("Error in initializeMap:", e);
+        // Use default location as last resort
         userLocation = { lat: 40.7128, lng: -74.0060 }; // Default: New York
         createMap(userLocation);
     }
